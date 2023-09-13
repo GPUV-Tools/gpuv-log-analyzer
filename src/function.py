@@ -26,3 +26,34 @@ class Function:
     
     # def update_min_duration(self, min_dura) -> None:
     #     self.min_duration = min_dura
+    
+    def __str__(self) -> str:     
+        str = """
+        Function name: {}
+        Frequency: {}
+        Total duration: {}ms
+        Avg duration per call: {}ms
+        Max duration:
+            total time: {}ms
+            start time: {}
+            end time: {}
+        Min duration:
+            total time: {}ms
+            start time: {}
+            end time: {}
+        Num of empty stack error: {}
+        Num of function's entry and exit mismatch: {}
+        """.format(
+            self.name,
+            self.frequency,
+            self.duration,
+            self.dura_per_call,
+            (self.max_duration)[0],
+            (self.max_duration)[1],
+            (self.max_duration)[2],
+            (self.min_duration)[0],
+            (self.min_duration)[1],
+            (self.min_duration)[2],
+            self.empty_entry,
+            self.mismatch_entry)
+        return str
