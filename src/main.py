@@ -23,8 +23,8 @@ def parse_ftrace():
                 elif "Exit" in split_lst[0][-1]:
                     #pop out a entry function from a non empty stack
                     if func_entry:
-                        func_starttime, func_name = func_entry.pop()
-                        func_starttime = func_starttime.strip()
+                        func_starttime_str, func_name = func_entry.pop()
+                        func_starttime_str = func_starttime_str.strip()
                     else:
                         if split_lst[0][2] in all_func:
                             all_func[split_lst[0][2]].empty_entry += 1
@@ -35,11 +35,11 @@ def parse_ftrace():
                     
                     # check if the entry function match the exit function
                     if split_lst[0][2] == func_name:
-                        func_endtime = split_lst[0][1].strip()
+                        func_endtime_str = split_lst[0][1].strip()
                         # convert the str time to time object
-                        func_starttime = datetime.strptime(func_starttime, '%m/%d/%Y-%H:%M:%S.%f')
-                        func_endtime = datetime.strptime(func_endtime, '%m/%d/%Y-%H:%M:%S.%f')
-                        func_total_time = func_endtime - func_starttime
+                        func_starttime = datetime.strptime(func_starttime_str, '%m/%d/%Y-%H:%M:%S.%f')
+                        func_endtime = datetime.strptime(func_endtime_str, '%m/%d/%Y-%H:%M:%S.%f')
+                        func_total_time = (func_endtime - func_starttime).total_seconds() * 1000
 
                         if func_name in all_func:
                             # [how many times being called(frequancy), total time(total duration), average duration per call, longest running interval (max duration), least running interval (min duration)]                       
@@ -51,18 +51,18 @@ def parse_ftrace():
                             # [max duration, starttime, endtime]
                             if func_total_time > func.max_duration[0]:
                                 func.max_duration[0] = func_total_time # max duration
-                                func.max_duration[1] = func_starttime # start time of this duration
-                                func.max_duration[2] = func_endtime # end time of this duration
+                                func.max_duration[1] = func_starttime_str # start time of this duration
+                                func.max_duration[2] = func_endtime_str # end time of this duration
                             
                             # [min duration, starttime, endtime]
                             if func_total_time <  func.min_duration[0]:
                                 func.min_duration[0] = func_total_time # min duration22222
-                                func.min_duration[1] = func_starttime # start time of this duration
-                                func.min_duration[2] = func_endtime # end time of this duration
+                                func.min_duration[1] = func_starttime_str # start time of this duration
+                                func.min_duration[2] = func_endtime_str # end time of this duration
                         
                         else:    
-                            max_duration = [func_total_time, func_starttime, func_endtime] # [max duration, starttime, endtime] 
-                            min_duration = [func_total_time, func_starttime, func_endtime] # [min duration, starttime, endtime] 
+                            max_duration = [func_total_time, func_starttime_str, func_endtime_str] # [max duration, starttime, endtime] 
+                            min_duration = [func_total_time, func_starttime_str, func_endtime_str] # [min duration, starttime, endtime] 
                             new_func = function.Function(func_name, func_total_time, func_total_time, max_duration, min_duration)
                             all_func[func_name] = new_func                 
                     else:
@@ -84,12 +84,18 @@ if __name__ == "__main__":
         # Also option to print everything
 
     for item in all_func:
-        print("function name: {}".format(all_func[item].name))
+        print("Function name: {}".format(all_func[item].name))
         print("Frequency: {}".format(all_func[item].frequency))
-        print("Total duration: {}".format(all_func[item].duration))
-        print("Avg duration per call: {}".format(all_func[item].dura_per_call))
-        print("Max duration: {}".format(all_func[item].max_duration))
-        print("Min duration: {}".format(all_func[item].min_duration))
+        print("Total duration: {}ms".format(all_func[item].duration))
+        print("Avg duration per call: {}ms".format(all_func[item].dura_per_call))
+        print("Max duration:")
+        print("    total time: {}ms".format((all_func[item].max_duration)[0]))
+        print("    start time: {}".format((all_func[item].max_duration)[1]))
+        print("    end time: {}".format((all_func[item].max_duration)[2]))
+        print("Min duration:")
+        print("    total time: {}ms".format((all_func[item].min_duration)[0]))
+        print("    start time: {}".format((all_func[item].min_duration)[1]))
+        print("    end time: {}".format((all_func[item].min_duration)[2]))
         print("Num of empty stack error: {}".format(all_func[item].empty_entry))
         print("Num of function's entry and exit mismatch: {}".format(all_func[item].mismatch_entry))
         print("\n")
