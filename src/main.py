@@ -1,12 +1,20 @@
 # import click
 import function
+import report_options
+import sys
+import os
 import re
 from datetime import datetime
 
+def print_results_to_file(all_func):
+    f = open("output.txt", "w")
+    for func in all_func:
+        f.write(str(all_func[func]) + "\n")
+    f.close()
 
-def parse_ftrace():
-    filename = "C:\\Users\\ellapan2\\Desktop\\wpp_example.txt"
-    wpp_log = open(filename,"r")
+def parse_ftrace(path, options):
+    # file_path = get_full_file_path(path)
+    wpp_log = open(options.file_path,"r")
     
     func_entry = [] # stack for function 
     pattern = re.compile(r"(.*)::(.*)\[B_rel\](.*)(::.*)?:(\d+):(.*)") #
@@ -18,6 +26,7 @@ def parse_ftrace():
             split_lst = pattern.findall(line) #[('', '', ...)]
             
             if split_lst != []:  
+                # print(split_lst)
                 if "Entry" in split_lst[0][-1]:
                     func_entry.append((split_lst[0][1], split_lst[0][2]))
                 elif "Exit" in split_lst[0][-1]:
@@ -72,33 +81,43 @@ def parse_ftrace():
                         print("oops, Entry function doesn't match Exit function, keep popping from entry stack")
                         print("\n")
         
+    wpp_log.close()
     return all_func
 
+def main():
+    # get and parse command line arguments
+    # expected input is (main.py, file path, print to file[y/n])
+    options = report_options.ReportOptions()
+    if options.parse_args() == False:
+        return None
 
-if __name__ == "__main__":
-    all_func = parse_ftrace()
+    all_func = parse_ftrace(options.file_path, options)
     #print("Function Name  |  called frequancy | total call duration | avg call time | max duration --- start time --- endtime | min duration --- start time --- endtime")
-    #TODO: print to a file
+    if options.print_to_txt:
+        print_results_to_file(all_func)
 
     # TODO: make a CLI so user can choose between getting function profiling vs errors
         # Also option to print everything
-
-    for item in all_func:
-        # print("Function name: {}".format(all_func[item].name))
-        # print("Frequency: {}".format(all_func[item].frequency))
-        # print("Total duration: {}ms".format(all_func[item].duration))
-        # print("Avg duration per call: {}ms".format(all_func[item].dura_per_call))
-        # print("Max duration:")
-        # print("    total time: {}ms".format((all_func[item].max_duration)[0]))
-        # print("    start time: {}".format((all_func[item].max_duration)[1]))
-        # print("    end time: {}".format((all_func[item].max_duration)[2]))
-        # print("Min duration:")
-        # print("    total time: {}ms".format((all_func[item].min_duration)[0]))
-        # print("    start time: {}".format((all_func[item].min_duration)[1]))
-        # print("    end time: {}".format((all_func[item].min_duration)[2]))
-        # print("Num of empty stack error: {}".format(all_func[item].empty_entry))
-        # print("Num of function's entry and exit mismatch: {}".format(all_func[item].mismatch_entry))
-        print(all_func[item])
-        print("\n")
+    if options.print_to_term:
+        for item in all_func:
+            # print("Function name: {}".format(all_func[item].name))
+            # print("Frequency: {}".format(all_func[item].frequency))
+            # print("Total duration: {}ms".format(all_func[item].duration))
+            # print("Avg duration per call: {}ms".format(all_func[item].dura_per_call))
+            # print("Max duration:")
+            # print("    total time: {}ms".format((all_func[item].max_duration)[0]))
+            # print("    start time: {}".format((all_func[item].max_duration)[1]))
+            # print("    end time: {}".format((all_func[item].max_duration)[2]))
+            # print("Min duration:")
+            # print("    total time: {}ms".format((all_func[item].min_duration)[0]))
+            # print("    start time: {}".format((all_func[item].min_duration)[1]))
+            # print("    end time: {}".format((all_func[item].min_duration)[2]))
+            # print("Num of empty stack error: {}".format(all_func[item].empty_entry))
+            # print("Num of function's entry and exit mismatch: {}".format(all_func[item].mismatch_entry))
+            print(all_func[item])
+            print("\n")
     
     print("ha")
+
+if __name__ == "__main__":
+    main()
