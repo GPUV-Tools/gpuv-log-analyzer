@@ -3,6 +3,9 @@
 ### How to setup
 #### pip install -r requirements.txt
 
+### Sample usage
+python main.py -file [file name] -dest [file, terminal, all]
+
 ### Initial Milestones
 #### input → wpp log
 #### output → function name | how many times called | average, min, max call duration
