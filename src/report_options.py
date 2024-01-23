@@ -11,8 +11,8 @@ class ReportOptions():
         self.file_path = ""
         self.print_to_term = False
         self.print_to_txt = False
-        self.get_func_prof = False
-        self.get_errors = False
+        self.get_func_prof = True
+        self.get_errors = True
 
     def get_full_file_path(self, path) -> str:
         working_dir = os.getcwd()

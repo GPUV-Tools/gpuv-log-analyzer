@@ -8,24 +8,6 @@ class Function:
         self.min_duration = min_dura
         self.empty_entry = 0
         self.mismatch_entry = 0
-        
-    # def update_name(self, name) -> None:
-    #     self.name = name
-    
-    # def update_frequency(self, freq) -> None:
-    #     self.frequency = freq
-    
-    # def update_duration(self, duration) -> None:
-    #     self.duration = duration
-    
-    # def update_dura_per_call(self, dpc) -> None:
-    #     self.dura_per_call = dpc
-    
-    # def update_max_duration(self, max_dura) -> None:
-    #     self.max_duration = max_dura
-    
-    # def update_min_duration(self, min_dura) -> None:
-    #     self.min_duration = min_dura
     
     def __str__(self) -> str:     
         str = """
@@ -48,12 +30,12 @@ class Function:
             self.frequency,
             self.duration,
             self.dura_per_call,
-            (self.max_duration)[0],
-            (self.max_duration)[1],
-            (self.max_duration)[2],
-            (self.min_duration)[0],
-            (self.min_duration)[1],
-            (self.min_duration)[2],
+            self.max_duration.total_time,
+            self.max_duration.start_time,
+            self.max_duration.end_time,
+            self.min_duration.total_time,
+            self.min_duration.start_time,
+            self.min_duration.end_time,
             self.empty_entry,
             self.mismatch_entry)
         return str
